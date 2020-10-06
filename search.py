@@ -90,62 +90,57 @@ def depthFirstSearch(problem):
     Is the start a goal? False
     Start's successors: [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
     """
-
     "*** YOUR CODE HERE ***"
-    """
-    For DFS to work we need a stack.
-    In this stack we add the next node to be searched until objective is found
-
-    As we need to keep track of the path we shall keep track of the tree
-    """
-
+    # Stack declaration and formatting
     stack = util.Stack()
     stack.push(((problem.getStartState(), '', 0), []))  # ((Position, action, cost), path)
-    visited = [problem.getStartState()]
+    visited = [problem.getStartState()]  # Visited node list
 
+    # If stack is empty we finish looking through the whole graph
     while not stack.isEmpty():
-        current = stack.pop()
+        current = stack.pop()  # Get current node from stack
 
-        if problem.isGoalState(current[0][0]):
-            return current[1]
+        if problem.isGoalState(current[0][0]):  # If goal we finish the search
+            return current[1]  # Return list of actions
 
         visited.append(current[0][0])
-        temp = []
+        temp = []  # Temp list where we will add all successor nodes
 
         for child in problem.getSuccessors(current[0][0]):
             if child[0] not in visited:
-                temp.append((child, current[1] + [child[1]]))
+                temp.append((child, current[1] + [child[1]]))  # We add the movement as a list (easier to return)
 
-        temp.reverse()  # This is only because we know it's the best path. Is this mandatory or recommended?
+        temp.reverse()  # This is only because we know it will find the best path in small map.
 
         for item in temp:
-            stack.push(item)
+            stack.push(item)  # Add successors to visit
 
-    return []
+    return []  # If answer not found we return empty list
 
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-
+    # Queue declaration and formatting
     queue = util.Queue()
-    queue.push(((problem.getStartState(), '', 0), []))
-    visited = [problem.getStartState()]
+    queue.push(((problem.getStartState(), '', 0), []))  # ((Position, action, cost), path)
+    visited = [problem.getStartState()]  # Visited node list
 
+    # If queue is empty we finish looking through the whole graph
     while not queue.isEmpty():
-        current = queue.pop()
+        current = queue.pop()  # Get current node from queue
 
-        if problem.isGoalState(current[0][0]):
-            return current[1]
+        if problem.isGoalState(current[0][0]):  # If goal we finish the search
+            return current[1]  # Return list of actions
 
         visited.append(current[0][0])
 
         for child in problem.getSuccessors(current[0][0]):
             if child[0] not in visited:
-                visited.append(child[0])
-                queue.push((child, current[1] + [child[1]]))
+                visited.append(child[0])  # Add current's childs to visited (so no duplicates can be added in queue)
+                queue.push((child, current[1] + [child[1]]))  # Add child and move list to queue
 
-    return []
+    return []  # If answer not found we return empty list
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
