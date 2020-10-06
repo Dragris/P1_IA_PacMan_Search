@@ -94,7 +94,7 @@ def depthFirstSearch(problem):
     # Stack declaration and formatting
     stack = util.Stack()
     stack.push(((problem.getStartState(), '', 0), []))  # ((Position, action, cost), path)
-    visited = [problem.getStartState()]  # Visited node list
+    visited = []  # Visited node list
 
     # If stack is empty we finish looking through the whole graph
     while not stack.isEmpty():
@@ -124,7 +124,7 @@ def breadthFirstSearch(problem):
     # Queue declaration and formatting
     queue = util.Queue()
     queue.push(((problem.getStartState(), '', 0), []))  # ((Position, action, cost), path)
-    visited = [problem.getStartState()]  # Visited node list
+    visited = []  # Visited node list
 
     # If queue is empty we finish looking through the whole graph
     while not queue.isEmpty():
@@ -157,8 +157,22 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    heap = util.PriorityQueue()
+    heap.push(((problem.getStartState(), '', 0), [], 0), 0)  # (((position, action, cost), path, acc. cost), priority)
 
+    visited = {problem.getStartState(): 0}
+    while not heap.isEmpty():
+        current = heap.pop()
+        if problem.isGoalState(current[0][0]):
+            return current[1]
+
+        for child in problem.getSuccessors(current[0][0]):
+            if child[0] not in visited or current[2] + child[2] < visited[child[0]]:
+                if child[0] in visited:
+                    visited[child[0]] = current[2]+child[2]
+                else:
+                    visited.update(({child[0]:current[2]+child[2]}))
+                heap.push((child, current[1]+[child[1]], current[2] + child[2] + heuristic(child[0], problem)))
 
 # Abbreviations
 bfs = breadthFirstSearch
