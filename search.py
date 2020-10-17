@@ -154,7 +154,13 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def aStarSearch(problem, heuristic=nullHeuristic):
+def heuristic_bsman(position, problem):
+    # Manhattan heuristic. We take advantage of the goal parameter.
+    xy_current = position
+    xy_goal = problem.goal
+    return abs(xy_current[0] - xy_goal[0]) + abs(xy_current[1] - xy_goal[1])
+
+def aStarSearch(problem, heuristic=heuristic_bsman):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     heap = util.PriorityQueue()
@@ -173,6 +179,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 else:
                     visited.update(({child[0]:current[2]+child[2]}))
                 heap.push((child, current[1]+[child[1]], current[2] + child[2] + heuristic(child[0], problem)))
+
+
 
 # Abbreviations
 bfs = breadthFirstSearch
