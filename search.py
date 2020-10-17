@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -154,13 +154,8 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
-def heuristic_bsman(position, problem):
-    # Manhattan heuristic. We take advantage of the goal parameter.
-    xy_current = position
-    xy_goal = problem.goal
-    return abs(xy_current[0] - xy_goal[0]) + abs(xy_current[1] - xy_goal[1])
 
-def aStarSearch(problem, heuristic=heuristic_bsman):
+def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     heap = util.PriorityQueue()
@@ -170,16 +165,17 @@ def aStarSearch(problem, heuristic=heuristic_bsman):
     while not heap.isEmpty():
         current = heap.pop()
         if problem.isGoalState(current[0][0]):
-            return current[1]
+            return current[1]  # Goal found
 
         for child in problem.getSuccessors(current[0][0]):
             if child[0] not in visited or current[2] + child[2] < visited[child[0]]:
                 if child[0] in visited:
                     visited[child[0]] = current[2]+child[2]
                 else:
-                    visited.update(({child[0]:current[2]+child[2]}))
-                heap.push((child, current[1]+[child[1]], current[2] + child[2] + heuristic(child[0], problem)))
-
+                    visited.update({child[0]: current[2]+child[2]})
+                heap.push((child, current[1] + [child[1]], current[2] + child[2]), current[2] + child[2] + heuristic(child[0], problem))
+                # Priority = current acc. cost + next cost + heuristic
+    return []  # No solution found
 
 
 # Abbreviations
