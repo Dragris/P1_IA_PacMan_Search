@@ -487,6 +487,8 @@ def foodHeuristic(state, problem):
     "*** YOUR CODE HERE ***"
     heur = 0
     for food in foodGrid.asList():
+        # We use maze distance instead of manhattan as it will give us a better answer for the problem
+        # Takes longer to calculate than
         dist = mazeDistance(position, food, problem.startingGameState)
         heur = dist if heur < dist else heur
 

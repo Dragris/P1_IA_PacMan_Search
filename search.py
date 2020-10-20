@@ -173,7 +173,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     visited[child[0]] = current[2]+child[2]
                 else:
                     visited.update({child[0]: current[2]+child[2]})
-                heap.push((child, current[1] + [child[1]], current[2] + child[2]), current[2] + child[2] + heuristic(child[0], problem))
+                heap.push((child, current[1] + [child[1]], current[2] + child[2]),
+                          current[2] + child[2] + heuristic(child[0], problem))
                 # Priority = current acc. cost + next cost + heuristic
     return []  # No solution found
 
