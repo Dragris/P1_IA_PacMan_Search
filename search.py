@@ -104,16 +104,9 @@ def depthFirstSearch(problem):
             return current[1]  # Return list of actions
 
         visited.append(current[0][0])
-        temp = []  # Temp list where we will add all successor nodes
-
         for child in problem.getSuccessors(current[0][0]):
             if child[0] not in visited:
-                temp.append((child, current[1] + [child[1]]))  # We add the movement as a list (easier to return)
-
-        temp.reverse()  # This is only because we know it will find the best path in small map.
-
-        for item in temp:
-            stack.push(item)  # Add successors to visit
+                stack.push((child, current[1] + [child[1]]))  # Add successors to visit
 
     return []  # If answer not found we return empty list
 
@@ -145,18 +138,40 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    heap = util.PriorityQueue()
+    heap.push(((problem.getStartState(), '', 0), [], 0), 0)  # (((position, action, cost), path, acc. cost), priority)
+
+    visited = {problem.getStartState(): 0}
+    while not heap.isEmpty():
+        current = heap.pop()
+        if problem.isGoalState(current[0][0]):
+            return current[1]  # Goal found
+
+        for child in problem.getSuccessors(current[0][0]):
+            if child[0] not in visited or current[2] + child[2] < visited[child[0]]:
+                if child[0] in visited:
+                    # We update child value to a lower one
+                    visited[child[0]] = current[2] + child[2]
+                else:
+                    visited.update({child[0]: current[2] + child[2]})
+                heap.push((child, current[1] + [child[1]], current[2] + child[2]),
+                          current[2] + child[2])
+                # Priority = current acc. cost + next cost + heuristic
+
+    return []
 
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
+
+
     return 0
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
+    "Search the node that has the lowest combined cost and heuristic first."
     "*** YOUR CODE HERE ***"
     heap = util.PriorityQueue()
     heap.push(((problem.getStartState(), '', 0), [], 0), 0)  # (((position, action, cost), path, acc. cost), priority)
@@ -170,12 +185,14 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for child in problem.getSuccessors(current[0][0]):
             if child[0] not in visited or current[2] + child[2] < visited[child[0]]:
                 if child[0] in visited:
+                    # We update child value to a lower one
                     visited[child[0]] = current[2]+child[2]
                 else:
                     visited.update({child[0]: current[2]+child[2]})
                 heap.push((child, current[1] + [child[1]], current[2] + child[2]),
                           current[2] + child[2] + heuristic(child[0], problem))
                 # Priority = current acc. cost + next cost + heuristic
+
     return []  # No solution found
 
 

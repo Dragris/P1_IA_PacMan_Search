@@ -305,7 +305,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, self.corners)
+        return self.startingPosition, self.corners
 
     def isGoalState(self, state):
         """
@@ -381,7 +381,6 @@ def cornersHeuristic(state, problem):
         if corner in state[1]:  # We can check all unvisited corners are stored in state[1] as tuple
             dist = util.manhattanDistance(state[0], corner)
             heur = dist if heur < dist else heur
-
 
     # We return the highest expected cost corner for a better heuristic
     return heur
@@ -485,10 +484,14 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
+    lista = []
+    for food in foodGrid.asList():
+        lista.append(util.manhattanDistance(position, food))
+
     heur = 0
     for food in foodGrid.asList():
         # We use maze distance instead of manhattan as it will give us a better answer for the problem
-        # Takes longer to calculate than
+        # Takes longer to calculate than manhattan
         dist = mazeDistance(position, food, problem.startingGameState)
         heur = dist if heur < dist else heur
 
@@ -519,14 +522,25 @@ class ClosestDotSearchAgent(SearchAgent):
         gameState.
         """
         # Here are some useful elements of the startState
+        queue = util.Queue()
+        visited = []
         startPosition = gameState.getPacmanPosition()
         food = gameState.getFood()
         walls = gameState.getWalls()
         problem = AnyFoodSearchProblem(gameState)
-
+        queue.push((problem.getStartState(), []))
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
-
+        "From GitHub"
+        while queue:
+            pos, actions = queue.pop()
+            if pos not in visited:
+                visited.append(pos)
+                if problem.isGoalState(pos):
+                    return actions
+                succesors = problem.getSuccessors(pos)
+                for succesor in succesors:
+                    coord, direction, cost = succesor
+                    queue.push((coord, actions + [direction]))
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -562,7 +576,8 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x, y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        foodPositions = self.food.asList()
+        return (x,y) in foodPositions
 
 
 def mazeDistance(point1, point2, gameState):
